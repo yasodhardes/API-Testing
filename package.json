@@ -1,0 +1,25 @@
+{
+  "name": "Employe-Management",
+  "version": "0.1.0",
+  "description": "Employe management using json file",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "dependencies": {
+    "body-parser": "^1.6.5",
+    "compression": "^1.0.11",
+    "cors": "^2.4.1",
+    "dotenv": "^0.4.0",
+    "errorhandler": "^1.1.1",
+    "express": "^4.8.5",
+    "express-jwt": "^0.3.1",
+    "express-validation": "^3.0.8",
+    "jsonwebtoken": "^5.0.1",
+    "live-server": "^1.2.1",
+    "lodash": "^2.4.1",
+    "morgan": "^1.2.3",
+    "nodemon": "^2.0.15"
+  }
+}

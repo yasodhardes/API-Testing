@@ -1,0 +1,5 @@
+{
+  "secret": "kamal@1234@node",
+  "audience": "nodejs-auth",
+  "issuer": "https://kamalsanjeewa.com"
+}

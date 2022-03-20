@@ -1,0 +1,12 @@
+Mock API:
+https://jsonplaceholder.typicode.com/
+
+SOAP APIS: 
+https://documenter.getpostman.com/view/8854915/Szf26WHn#c21ffd17-d0af-4eb8-adc1-990c3ae5be75
+
+sample wsdl : 
+https://github.com/monodot/camel-demos/blob/master/simple-tests/src/main/resources/wsdl/CustomerService.wsdl
+
+
+//postman variable scopes
+https://assets.postman.com/postman-docs/var-scope.jpg

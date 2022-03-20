@@ -1,0 +1,6 @@
+
+POST /sayHello HTTP/1.1
+HOST: api.example.com
+Content-Type: application/json
+
+{"name": "Kamal Sanjeewa"}
