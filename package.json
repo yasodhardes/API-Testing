@@ -4,7 +4,7 @@
   "description": "Employe management using json file",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "newman run ./doc/api-testing.postman_collection.json -e doc/local.postman_environment.json",
     "start": "nodemon --ignore ./data/ server.js"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "live-server": "^1.2.1",
     "lodash": "^2.4.1",
     "morgan": "^1.2.3",
+    "newman": "^5.3.2",
     "nodemon": "^2.0.15"
   }
 }
