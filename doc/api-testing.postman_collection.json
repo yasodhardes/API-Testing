@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "6d8a872e-ba53-459b-a8e6-2108abc5d0ba",
+		"_postman_id": "a78c5bd6-392f-4293-a47f-3e6c8c8d9af7",
 		"name": "api-testing",
 		"description": "This is a NodeJS API that supports username and password authentication with JWTs and has APIs manage employees",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
@@ -11,6 +11,40 @@
 			"item": [
 				{
 					"name": "Create Admin",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let userName = pm.variables.replaceIn(\"{{$randomUserName}}\")\r",
+									"pm.environment.set(\"admin\", userName)\r",
+									"pm.environment.set(\"email\", `${userName}_${Date.now()}@bistecglobal.com`)"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have a valid id token\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.id_token).to.have.length.greaterThan(1);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have a valid access token\", function () {\r",
+									"        var jsonData = pm.response.json();\r",
+									"        pm.expect(jsonData.access_token).to.have.length.greaterThan(1);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"protocolProfileBehavior": {
 						"disabledSystemHeaders": {}
 					},
@@ -19,7 +53,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"kamal\",\n\t\"password\": \"test123\",\n    \"extra\": \"admin\"\n}",
+							"raw": "{\n\t\"username\": \"{{admin}}\",\n\t\"password\": \"{{password}}\",\n    \"extra\": \"{{email}}\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -27,12 +61,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/admin",
-							"protocol": "http",
+							"raw": "{{base_url}}/admin",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"admin"
 							]
@@ -48,13 +80,21 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"console.log(\"Test\")",
-									"console.log(pm.response);",
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
 									"",
-									"console.log(pm.response.json())",
+									"var jsonData = pm.response.json();",
 									"",
-									"pm.globals.set(\"api_token\", pm.response.json().access_token)",
-									""
+									"pm.test(\"should have a valid id token\", function () {",
+									"    pm.expect(jsonData.id_token).to.have.length.greaterThan(1);",
+									"});",
+									"",
+									"pm.test(\"should have a valid access token\", function () {",
+									"    pm.expect(jsonData.access_token).to.have.length.greaterThan(1);",
+									"});",
+									"",
+									"pm.environment.set(\"access_token\", jsonData.access_token);"
 								],
 								"type": "text/javascript"
 							}
@@ -63,7 +103,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"console.log(\"pre req\")"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -79,15 +119,13 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"username\": \"sanjeewa\",\n\t\"password\": \"test123\"\n}"
+							"raw": "{\n\t\"username\": \"{{admin}}\",\n\t\"password\": \"{{password}}\"\n}"
 						},
 						"url": {
-							"raw": "http://localhost:3001/admin/login",
-							"protocol": "http",
+							"raw": "{{base_url}}/admin/login",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"admin",
 								"login"
@@ -109,7 +147,7 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
-									"console.log(\"Pre request script\")"
+									""
 								],
 								"type": "text/javascript"
 							}
@@ -118,7 +156,9 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"console.log(\"Tests\")"
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
 								],
 								"type": "text/javascript"
 							}
@@ -128,21 +168,6 @@
 						"disableBodyPruning": true
 					},
 					"request": {
-						"auth": {
-							"type": "basic",
-							"basic": [
-								{
-									"key": "password",
-									"value": "test",
-									"type": "string"
-								},
-								{
-									"key": "username",
-									"value": "user",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -150,12 +175,10 @@
 							"urlencoded": []
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/status",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/status",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"status"
@@ -166,6 +189,38 @@
 				},
 				{
 					"name": "RandomEmploye",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"should have a employee id\", function () {\r",
+									"    pm.expect(jsonData.id).to.be.greaterThan(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have a employee name\", function () {\r",
+									"    pm.expect(jsonData.employee_name.length).to.be.greaterThan(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have a valid salary\", function () {\r",
+									"    pm.expect(jsonData.employee_salary).to.be.greaterThan(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have a valid age\", function () {\r",
+									"    pm.expect(jsonData.employee_age).to.be.greaterThan(0);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "noauth"
@@ -175,20 +230,13 @@
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Authorization",
-								"value": "Bearer {your.jwt.token}",
-								"description": "Replace {your.jwt.token} with your JWT token."
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/employeRand",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/employeRand",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"employeRand"
@@ -205,13 +253,42 @@
 			"item": [
 				{
 					"name": "Employes",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"pm.environment.set(\"limit\", 100);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"pm.test(\"Should return expected number of employees\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var length = parseInt(pm.environment.get('limit'))\r",
+									"    pm.expect(jsonData.length).to.be.lessThan(length);\r",
+									"\r",
+									"    pm.environment.set('user_id', jsonData[jsonData.length-1].id, Number);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "bearer",
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{api_token}}",
+									"value": "{{access_token}}",
 									"type": "string"
 								}
 							]
@@ -224,12 +301,10 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/protected/employe?limit=2",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/protected/employe?limit={{limit}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"protected",
@@ -238,7 +313,7 @@
 							"query": [
 								{
 									"key": "limit",
-									"value": "2"
+									"value": "{{limit}}"
 								}
 							]
 						},
@@ -262,6 +337,27 @@
 							"listen": "test",
 							"script": {
 								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"should have a employee id\", function () {\r",
+									"    pm.expect(jsonData.id).to.eql(parseInt(pm.environment.get('user_id')));\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have a employee name\", function () {\r",
+									"    pm.expect(jsonData.employee_name.length).to.be.greaterThan(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have a valid salary\", function () {\r",
+									"    pm.expect(jsonData.employee_salary).to.be.greaterThan(0);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have a valid age\", function () {\r",
+									"    pm.expect(jsonData.employee_age).to.be.greaterThan(0);\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -274,7 +370,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{api_token}}",
+									"value": "{{access_token}}",
 									"type": "string"
 								}
 							]
@@ -287,23 +383,15 @@
 							}
 						],
 						"url": {
-							"raw": "http://localhost:3001/api/protected/employe/:useri_d",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/protected/employe/{{user_id}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"protected",
 								"employe",
-								":useri_d"
-							],
-							"variable": [
-								{
-									"key": "useri_d",
-									"value": "49"
-								}
+								"{{user_id}}"
 							]
 						},
 						"description": "It returns a String with a Random quote from Chuck Norris. It doesn't require authentication."
@@ -317,6 +405,64 @@
 							"listen": "prerequest",
 							"script": {
 								"exec": [
+									"var user_id = parseInt(pm.environment.get('user_id'))\r",
+									"pm.environment.set(\"user_id\", user_id + 1);\r",
+									"\r",
+									"let userName = pm.variables.replaceIn(\"{{$randomUserName}}\")\r",
+									"pm.environment.set(\"username\", userName)"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"should have success message\", function () {\r",
+									"    pm.expect(jsonData.msg).to.eql(\"Employe added successfully\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should not have errors\", function () {\r",
+									"    pm.expect(jsonData.error).to.be.false;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have created the Employe\", function () {\r",
+									"    let url = pm.variables.replaceIn(\"{{base_url}}/api/protected/employe/{{user_id}}\")\r",
+									"    let token = pm.variables.replaceIn(\"Bearer {{access_token}}\")\r",
+									"    pm.sendRequest({\r",
+									"        url,\r",
+									"        method: 'GET',\r",
+									"        header: {\r",
+									"            'Content-Type': 'application/json',\r",
+									"            'Authorization': token\r",
+									"        },\r",
+									"    }, (error, response) => {\r",
+									"        if (error) {\r",
+									"            console.log(error);\r",
+									"        }\r",
+									"\r",
+									"        pm.test('response should be okay to process', () => {\r",
+									"            pm.expect(error).to.equal(null);\r",
+									"            pm.expect(response).to.have.property('code', 200);\r",
+									"            pm.expect(response).to.have.property('status', 'OK');\r",
+									"        });\r",
+									"\r",
+									"        \r",
+									"        pm.test(\"should have requested employee id\", function () {\r",
+									"            pm.expect(response.json().id).to.eql(parseInt(pm.environment.get('user_id')));\r",
+									"        });\r",
+									"\r",
+									"        pm.test(\"should have requested employee name\", function () {\r",
+									"            pm.expect(response.json().employee_name).to.eql(pm.environment.get('username'));\r",
+									"        });\r",
+									"    })\r",
+									"});\r",
 									""
 								],
 								"type": "text/javascript"
@@ -329,7 +475,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{api_token}}",
+									"value": "{{access_token}}",
 									"type": "string"
 								}
 							]
@@ -338,7 +484,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": 40,\n    \"name\": \"test 1\",\n    \"salary\": 86000,\n    \"age\": 20,\n    \"profile_image\": \"\"\n}",
+							"raw": "{\n    \"id\": {{user_id}},\n    \"employee_name\": \"{{username}}\",\n    \"employee_salary\": 85600,\n    \"employee_age\": 23,\n    \"profile_image\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -346,12 +492,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/protected/employe",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/protected/employe",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"protected",
@@ -368,22 +512,62 @@
 							"listen": "test",
 							"script": {
 								"exec": [
-									"console.log(pm.request.body);",
-									"",
-									"let reqBody = JSON.parse(pm.request.body.raw);",
-									"console.log(reqBody.id)",
-									"",
-									"pm.sendRequest({",
-									"    url : pm.globals.get(\"base_url\")+\"/api/protected/employe/\"+reqBody.id,",
-									"    method: 'GET',",
-									"    header: {",
-									"        Authorization: \"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2thbWFsc2FuamVld2EuY29tIiwiYXVkIjoibm9kZWpzLWF1dGgiLCJleHAiOjE2NDY3MzYzMzMsInNjb3BlIjoiZnVsbF9hY2Nlc3MiLCJzdWIiOiJsYWxhbGFuZHxnb250byIsImp0aSI6IlZndnJZM0x0eTZMakxVZUoiLCJhbGciOiJIUzI1NiIsImlhdCI6MTY0NjczMjczM30.vS2Qm_PUd17CNCaE6pSAvaLbVCnzpw5CPMFrNihCTUg\"",
-									"    }",
-									"}, function (err, response) {",
-									"    console.log(response.json());",
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
 									"});",
 									"",
+									"var jsonData = pm.response.json();",
+									"",
+									"pm.test(\"should have success message\", function () {",
+									"    pm.expect(jsonData.msg).to.eql(\"Employe updated successfully\");",
+									"});",
+									"",
+									"pm.test(\"should not have errors\", function () {",
+									"    pm.expect(jsonData.error).to.be.false;",
+									"});",
+									"",
+									"pm.test(\"should have updated the Employe\", function () {",
+									"    let url = pm.variables.replaceIn(\"{{base_url}}/api/protected/employe/{{user_id}}\")",
+									"    let token = pm.variables.replaceIn(\"Bearer {{access_token}}\")",
+									"    pm.sendRequest({",
+									"        url,",
+									"        method: 'GET',",
+									"        header: {",
+									"            'Content-Type': 'application/json',",
+									"            'Authorization': token",
+									"        },",
+									"    }, (error, response) => {",
+									"        if (error) {",
+									"            console.log(error);",
+									"        }",
+									"",
+									"        pm.test('response should be okay to process', () => {",
+									"            pm.expect(error).to.equal(null);",
+									"            pm.expect(response).to.have.property('code', 200);",
+									"            pm.expect(response).to.have.property('status', 'OK');",
+									"        });",
+									"",
+									"        ",
+									"        pm.test(\"should have requested employee id\", function () {",
+									"            pm.expect(response.json().id).to.eql(parseInt(pm.environment.get('user_id')));",
+									"        });",
+									"",
+									"        pm.test(\"should have requested employee name\", function () {",
+									"            pm.expect(response.json().employee_name).to.eql(pm.environment.get('username'));",
+									"        });",
+									"    })",
+									"});",
 									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"let userName = pm.variables.replaceIn(\"{{$randomUserName}}\")\r",
+									"pm.environment.set(\"username\", userName)"
 								],
 								"type": "text/javascript"
 							}
@@ -395,7 +579,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{api_token}}",
+									"value": "{{access_token}}",
 									"type": "string"
 								}
 							]
@@ -404,7 +588,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": 1,\n    \"name\": \"kamal Sanjeewa\",\n    \"salary\": 86000,\n    \"age\": 40,\n    \"profile_image\": \"\"\n}",
+							"raw": "{\n    \"id\": {{user_id}},\n    \"name\": \"{{username}}\",\n    \"salary\": 86000,\n    \"age\": 40,\n    \"profile_image\": \"\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -412,12 +596,10 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/protected/employe",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/protected/employe",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"protected",
@@ -438,6 +620,59 @@
 								],
 								"type": "text/javascript"
 							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});\r",
+									"\r",
+									"var jsonData = pm.response.json();\r",
+									"\r",
+									"pm.test(\"should have success message\", function () {\r",
+									"    pm.expect(jsonData.msg).to.eql(\"Employe deleted successfully\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should not have errors\", function () {\r",
+									"    pm.expect(jsonData.error).to.be.false;\r",
+									"});\r",
+									"\r",
+									"pm.test(\"should have updated the Employe\", function () {\r",
+									"    let url = pm.variables.replaceIn(\"{{base_url}}/api/protected/employe/{{user_id}}\")\r",
+									"    let token = pm.variables.replaceIn(\"Bearer {{access_token}}\")\r",
+									"    pm.sendRequest({\r",
+									"        url,\r",
+									"        method: 'GET',\r",
+									"        header: {\r",
+									"            'Content-Type': 'application/json',\r",
+									"            'Authorization': token\r",
+									"        },\r",
+									"    }, (error, response) => {\r",
+									"        if (error) {\r",
+									"            console.log(error);\r",
+									"        }\r",
+									"\r",
+									"        pm.test('response should be okay to process', () => {\r",
+									"            pm.expect(error).to.equal(null);\r",
+									"            pm.expect(response).to.have.property('code', 404);\r",
+									"        });\r",
+									"\r",
+									"        pm.test(\"should have requested employee id\", function () {\r",
+									"            pm.expect(response.json().error).to.be.true;\r",
+									"        });\r",
+									"\r",
+									"        pm.test(\"should have requested employee name\", function () {\r",
+									"            pm.expect(response.json().msg).to.eql(\"user not found\");\r",
+									"        });\r",
+									"\r",
+									"    })\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
 						}
 					],
 					"request": {
@@ -446,7 +681,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2thbWFsc2FuamVld2EuY29tIiwiYXVkIjoibm9kZWpzLWp3dC1hdXRoIiwiZXhwIjoxNjQ2MTEzNDc0LCJzY29wZSI6ImZ1bGxfYWNjZXNzIiwic3ViIjoibGFsYWxhbmR8Z29udG8iLCJqdGkiOiJlUVUyMllmYTF0a1RnQzBOIiwiYWxnIjoiSFMyNTYiLCJpYXQiOjE2NDYxMDk4NzR9.w-CpvsxZYXUPjak21adyjThyvm5NKJKXvGO-qQfhhIQ",
+									"value": "{{access_token}}",
 									"type": "string"
 								}
 							]
@@ -463,23 +698,15 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:3001/api/protected/employe/:user_id",
-							"protocol": "http",
+							"raw": "{{base_url}}/api/protected/employe/{{user_id}}",
 							"host": [
-								"localhost"
+								"{{base_url}}"
 							],
-							"port": "3001",
 							"path": [
 								"api",
 								"protected",
 								"employe",
-								":user_id"
-							],
-							"variable": [
-								{
-									"key": "user_id",
-									"value": null
-								}
+								"{{user_id}}"
 							]
 						}
 					},
