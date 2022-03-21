@@ -94,7 +94,9 @@
 									"    pm.expect(jsonData.access_token).to.have.length.greaterThan(1);",
 									"});",
 									"",
-									"pm.environment.set(\"access_token\", jsonData.access_token);"
+									"pm.environment.set(\"access_token\", jsonData.access_token);",
+									"",
+									"postman.setNextRequest(\"status\");"
 								],
 								"type": "text/javascript"
 							}
@@ -157,6 +159,10 @@
 							"script": {
 								"exec": [
 									"pm.test(\"Status code is 200\", function () {\r",
+									"    var status = pm.response.code;\r",
+									"    if (status !== 200) {\r",
+									"        postman.setNextRequest(null);\r",
+									"    }\r",
 									"    pm.response.to.have.status(200);\r",
 									"});"
 								],
