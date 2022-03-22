@@ -130,3 +130,4 @@ dist
 .pnp.*
 ~$Slides.pptx
 .DS_Store
+test-results-report.json
