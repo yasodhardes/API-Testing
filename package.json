@@ -6,7 +6,8 @@
   "scripts": {
     "test": "newman run ./doc/api-testing.postman_collection.json -e doc/local.postman_environment.json",
     "test:azure": "newman run ./doc/api-testing.postman_collection.json -e doc/azure.postman_environment.json",
-    "start": "nodemon --ignore ./data/ server.js"
+    "start:dev": "nodemon --ignore ./data/ server.js",
+    "start": "node server.js"
   },
   "dependencies": {
     "body-parser": "^1.6.5",
