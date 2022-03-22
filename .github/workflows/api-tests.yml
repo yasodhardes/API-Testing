@@ -16,17 +16,18 @@
 # For more information on GitHub Actions for Azure: https://github.com/Azure/Actions
 # For more information on the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples
-name: Deploy
+
+name: Tests
 
 on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
+  workflow_run:
+    workflows: ["Deploy"]
+    branches: [main]
+    types: 
+      - completed
 
 env:
-  AZURE_WEBAPP_NAME: employee-api   # set this to your application's name
-  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+
   NODE_VERSION: '16.x'                # set this to the node version to use
 
 jobs:
@@ -43,12 +44,5 @@ jobs:
 
     - name: npm install, build, and test
       run: |
-        npm install --only=production
-
-    - name: 'Deploy to Azure WebApp'
-      id: deploy-to-webapp 
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-        package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+        npm install --only=dev
+        npm run test:azure
