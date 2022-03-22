@@ -45,8 +45,7 @@ jobs:
     # Install the newman command line utility and also install the html extra reporter
     - name: Install newman
       run: |
-        npm install -g newman
-        npm install -g newman-reporter-htmlextra
+        npm install --only=dev
 
 
     # Make directory to upload the test results
@@ -56,12 +55,14 @@ jobs:
 
     # Run the POSTMAN collection
     - name: Run POSTMAN collection
+      id: run-tests
       run: |
-        newman run ./doc/api-testing.postman_collection.json -e ./doc/azure.postman_environment.json -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
+        npm run test:azure 
 
 
     # Upload the contents of Test Results directory to workspace
     - name: Output the run Details
+      if: steps.run-tests.outcome == 'failure' && steps.run-tests.outcome == 'success'
       uses: actions/upload-artifact@v2
       with:
         name: RunReports
