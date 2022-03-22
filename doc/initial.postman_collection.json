@@ -1,0 +1,536 @@
+{
+	"info": {
+		"_postman_id": "6d8a872e-ba53-459b-a8e6-2108abc5d0ba",
+		"name": "api-testing",
+		"description": "This is a NodeJS API that supports username and password authentication with JWTs and has APIs manage employees",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Create Admin",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {}
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"kamal\",\n\t\"password\": \"test123\",\n    \"extra\": \"admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/admin",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"admin"
+							]
+						},
+						"description": "The body must have `username`, `password` and `extra`. It returns `id_token` and `access_token` which are signed with the secret located at the `config.json` file. The `id_token` will contain the `username` and the `extra` information sent, while the `access_token` will contain the `audience`, `jti`, `issuer` and `scope`."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log(\"Test\")",
+									"console.log(pm.response);",
+									"",
+									"console.log(pm.response.json())",
+									"",
+									"pm.globals.set(\"api_token\", pm.response.json().access_token)",
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"console.log(\"pre req\")"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"username\": \"sanjeewa\",\n\t\"password\": \"test123\"\n}"
+						},
+						"url": {
+							"raw": "http://localhost:3001/admin/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"admin",
+								"login"
+							]
+						},
+						"description": "The body must have `username` and `password`. It returns `id_token` and `access_token` are signed with the secret located at the `config.json` file. The `id_token` will contain the `username` and the `extra` information sent, while the `access_token` will contain the `audience`, `jti`, `issuer` and `scope`."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "public",
+			"item": [
+				{
+					"name": "status",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									"console.log(\"Pre request script\")"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log(\"Tests\")"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "test",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/status",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "RandomEmploye",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {your.jwt.token}",
+								"description": "Replace {your.jwt.token} with your JWT token."
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/employeRand",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"employeRand"
+							]
+						},
+						"description": "It returns a String with a Random quote from Chuck Norris. It requires authentication. \n\nThe JWT - `access_token` must be sent on the `Authorization` header as follows: `Authorization: Bearer {jwt}`"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "restricted",
+			"item": [
+				{
+					"name": "Employes",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/protected/employe?limit=2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"protected",
+								"employe"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						},
+						"description": "It returns a String with a Random quote from Chuck Norris. It requires authentication. \n\nThe JWT - `access_token` must be sent on the `Authorization` header as follows: `Authorization: Bearer {jwt}`"
+					},
+					"response": []
+				},
+				{
+					"name": "Employe By Id",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:3001/api/protected/employe/:useri_d",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"protected",
+								"employe",
+								":useri_d"
+							],
+							"variable": [
+								{
+									"key": "useri_d",
+									"value": "49"
+								}
+							]
+						},
+						"description": "It returns a String with a Random quote from Chuck Norris. It doesn't require authentication."
+					},
+					"response": []
+				},
+				{
+					"name": "Add Employe",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 40,\n    \"name\": \"test 1\",\n    \"salary\": 86000,\n    \"age\": 20,\n    \"profile_image\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/protected/employe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"protected",
+								"employe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Employe",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"console.log(pm.request.body);",
+									"",
+									"let reqBody = JSON.parse(pm.request.body.raw);",
+									"console.log(reqBody.id)",
+									"",
+									"pm.sendRequest({",
+									"    url : pm.globals.get(\"base_url\")+\"/api/protected/employe/\"+reqBody.id,",
+									"    method: 'GET',",
+									"    header: {",
+									"        Authorization: \"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2thbWFsc2FuamVld2EuY29tIiwiYXVkIjoibm9kZWpzLWF1dGgiLCJleHAiOjE2NDY3MzYzMzMsInNjb3BlIjoiZnVsbF9hY2Nlc3MiLCJzdWIiOiJsYWxhbGFuZHxnb250byIsImp0aSI6IlZndnJZM0x0eTZMakxVZUoiLCJhbGciOiJIUzI1NiIsImlhdCI6MTY0NjczMjczM30.vS2Qm_PUd17CNCaE6pSAvaLbVCnzpw5CPMFrNihCTUg\"",
+									"    }",
+									"}, function (err, response) {",
+									"    console.log(response.json());",
+									"});",
+									"",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"name\": \"kamal Sanjeewa\",\n    \"salary\": 86000,\n    \"age\": 40,\n    \"profile_image\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/protected/employe",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"protected",
+								"employe"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Employe",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJodHRwczovL2thbWFsc2FuamVld2EuY29tIiwiYXVkIjoibm9kZWpzLWp3dC1hdXRoIiwiZXhwIjoxNjQ2MTEzNDc0LCJzY29wZSI6ImZ1bGxfYWNjZXNzIiwic3ViIjoibGFsYWxhbmR8Z29udG8iLCJqdGkiOiJlUVUyMllmYTF0a1RnQzBOIiwiYWxnIjoiSFMyNTYiLCJpYXQiOjE2NDYxMDk4NzR9.w-CpvsxZYXUPjak21adyjThyvm5NKJKXvGO-qQfhhIQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3001/api/protected/employe/:user_id",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3001",
+							"path": [
+								"api",
+								"protected",
+								"employe",
+								":user_id"
+							],
+							"variable": [
+								{
+									"key": "user_id",
+									"value": null
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "auth",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api_token",
+			"value": ""
+		},
+		{
+			"key": "custom_val",
+			"value": ""
+		}
+	]
+}
