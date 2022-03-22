@@ -42,7 +42,27 @@ jobs:
         node-version: ${{ env.NODE_VERSION }}
         cache: 'npm'
 
-    - name: npm install, build, and test
+    # Install the newman command line utility and also install the html extra reporter
+    - name: Install newman
       run: |
-        npm install --only=dev
-        npm run test:azure
+        npm install -g newman
+        npm install -g newman-reporter-htmlextra
+
+
+    # Make directory to upload the test results
+    - name: Make Directory for results
+      run: mkdir -p testResults
+
+
+    # Run the POSTMAN collection
+    - name: Run POSTMAN collection
+      run: |
+        newman run ./doc/api-testing.postman_collection.json -e ./doc/azure.postman_environment.json -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
+
+
+    # Upload the contents of Test Results directory to workspace
+    - name: Output the run Details
+      uses: actions/upload-artifact@v2
+      with:
+        name: RunReports
+        path: testResults
