@@ -5,7 +5,8 @@
   "main": "server.js",
   "scripts": {
     "start:dev": "nodemon --ignore ./data/ server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "newman run doc/api-testing.postman_collection.json -e doc/demo-local.postman_environment.json"
   },
   "dependencies": {
     "body-parser": "^1.6.5",
