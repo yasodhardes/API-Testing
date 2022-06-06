@@ -67,7 +67,11 @@ app.get('/api/protected/employe/:userId', (req, res) => {
 
 app.post('/api/protected/employe', (req, res) => {
   let result = employe.addEmploye(req.body);
-  res.status(201).json(result);
+  if(result.error){
+    res.status(409).json(result);
+  }else{
+    res.status(201).json(result);
+  }
 });
 
 app.put('/api/protected/employe', validate(userDataValidation, {}, {}), (req, res) => {
