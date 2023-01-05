@@ -4,10 +4,9 @@
   "description": "Employe management using json file",
   "main": "server.js",
   "scripts": {
-    "test": "newman run ./doc/api-testing.postman_collection.json -e doc/local.postman_environment.json",
-    "test:azure": "newman run ./doc/api-testing.postman_collection.json -e ./doc/azure.postman_environment.json -r htmlextra --reporter-htmlextra-export ./testResults/htmlreport.html",
     "start:dev": "nodemon --ignore ./data/ server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "newman run doc/api-testing.postman_collection.json -e doc/demo-local.postman_environment.json"
   },
   "dependencies": {
     "body-parser": "^1.6.5",
