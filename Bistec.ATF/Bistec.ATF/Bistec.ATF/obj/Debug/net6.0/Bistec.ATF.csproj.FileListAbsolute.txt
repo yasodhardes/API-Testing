@@ -1,0 +1,5 @@
+C:\Users\YashodhaDeSilvaBISTE\source\repos\Bistec.ATF\Bistec.ATF\Bistec.ATF\obj\Debug\net6.0\Bistec.ATF.csproj.AssemblyReference.cache
+C:\Users\YashodhaDeSilvaBISTE\source\repos\Bistec.ATF\Bistec.ATF\Bistec.ATF\obj\Debug\net6.0\Bistec.ATF.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\YashodhaDeSilvaBISTE\source\repos\Bistec.ATF\Bistec.ATF\Bistec.ATF\obj\Debug\net6.0\Bistec.ATF.AssemblyInfoInputs.cache
+C:\Users\YashodhaDeSilvaBISTE\source\repos\Bistec.ATF\Bistec.ATF\Bistec.ATF\obj\Debug\net6.0\Bistec.ATF.AssemblyInfo.cs
+C:\Users\YashodhaDeSilvaBISTE\source\repos\Bistec.ATF\Bistec.ATF\Bistec.ATF\obj\Debug\net6.0\Bistec.ATF.csproj.CoreCompileInputs.cache
